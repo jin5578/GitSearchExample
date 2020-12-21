@@ -12,15 +12,15 @@ import androidx.recyclerview.widget.AsyncDifferConfig
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.kotlinexample.R
 import com.example.kotlinexample.extensions.inflate
-import com.mashup.image.GlideApp
 import kotlinx.android.synthetic.main.item_detail_information.view.*
 import kotlinx.android.synthetic.main.item_detail_profile.view.*
 import kotlinx.android.synthetic.main.item_detail_users.view.*
 
 class DetailAdapter(
-    private val onClickUrl: (String) -> Unit
+    private val listener: OnClickListener?
 ) : ListAdapter<DetailAdapterItem, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
     companion object {
@@ -77,7 +77,7 @@ class DetailAdapter(
     }
 
     private fun ProfileViewHolder.bind(item: DetailAdapterItem.Repository) {
-        GlideApp.with(itemView)
+        Glide.with(itemView)
             .load(item.userAvatar)
             .placeholder(R.drawable.ic_account_circle_black_24dp)
             .error(R.drawable.ic_account_circle_black_24dp)
@@ -85,7 +85,8 @@ class DetailAdapter(
         SpannableStringBuilder(item.repoName).apply {
             setSpan(object : ClickableSpan() {
                 override fun onClick(widget: View) {
-                    onClickUrl(item.repoUrl)
+                    //onClickUrl(item.repoUrl)
+                    listener?.onUrlClick(item.repoUrl)
                 }
             }, 0, length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
         }.let {
@@ -131,5 +132,9 @@ class DetailAdapter(
         init {
             users.adapter = adapter
         }
+    }
+
+    interface OnClickListener {
+        fun onUrlClick(url: String)
     }
 }
